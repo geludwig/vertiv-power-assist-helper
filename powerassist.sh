@@ -1,5 +1,9 @@
 #!/bin/bash
 
+########################################
+# THIS SCRIPT IS OBSOLETE - DO NOT USE #
+########################################
+
 # VARIABLES
 shutTime=600 # time from ac lost to shutdown
 j=0
