@@ -32,11 +32,11 @@ def lifeSignal():
 
 # TEST MODE
 if testMode == True:
-    # POWER ASSIST API    
+    # POWER ASSIST API
     try:
         requests.get('http://' + vertivHost + ':8210/api/PowerAssist', timeout=1)
     except requests.exceptions.ConnectionError:
-        print(timestamp() + ' [ERROR] powerassist host unavailable')  
+        print(timestamp() + ' [ERROR] powerassist host unavailable')
     # SSH
     response = os.system('ping -c 1 ' + sshHost)
     if response == 0:
@@ -56,10 +56,10 @@ if testMode == True:
 log = open("log.txt", "a")
 
 # UPS MONITORING
-while shutdownFlag == False:  
+while shutdownFlag == False:
     # SIGN OF LIFE SIGNAL
     schedule.every().day.at("00:00").do(lifeSignal)
-    
+
     # POWER ASSIST API
     try:
         response = requests.get('http://' + vertivHost + ':8210/api/PowerAssist', timeout=1)
@@ -71,9 +71,9 @@ while shutdownFlag == False:
         acPresent = (jsondict[0]['status']['isAcPresent'])
         timeTillEmpty = (jsondict[0]['status']['runTimeToEmptyInSeconds'])
         errorFlagVertiv = False
-        
+
     # SSH
-    response = os.system('ping -c 1 ' + sshHost)
+    response = os.system('ping -c 1 ' + sshHost + '>/dev/null')
     if response != 0:
         log.write(timestamp() + ' [ERROR] ssh host unavailable\n')
         errorFlagSSH = True
