@@ -1,44 +1,93 @@
-# MODULES
+### MODULES ###
 import requests
 import os
 import paramiko
-import schedule
-from sys import exit
-from time import gmtime, strftime, sleep
+import sys
+import time
 
-# USER DEFINDED VARIABLES
+### USER DEFINDED VARIABLES ###
 runTimeLeft = 900 # runtime left before shutdown in seconds
-testMode = False # test ssh and powerassist connection
-vertivHost = '<url/ip>'
-sshHost = '<url/ip>'
+testFlag = False # test ssh and powerassist connection
+infoFlag = False # include additional ups data in log
+vertivHost = '<ip/url>'
+sshHost = '<ip/url>'
 port = 22
-username = '<usr>'
-password = '<pw>'
+username = '<usr ssh>'
+password = '<pw ssh>'
 
-# VARIABLES
+### VARIABLES ###
 shutdownFlag = False
-initialFlag = True
-errorFlagSSH = True
-errorFlagVertiv = True
+lasttimeMinute = None
+lasttimeHour = None
 
-# GLOBAL FUNCTIONS
-def timestamp():
+### GLOBAL FUNCTIONS ###
+def timeFunc():
+    global timeMinute
+    global timeHour
+    timeMinute = time.strftime('%M', time.gmtime())
+    timeHour = time.strftime('%H', time.gmtime())
+    return (timeMinute, timeHour)
+
+def timelogFunc():
     global currTime
-    currTime = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+    currTime = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())
     return currTime
 
-def lifeSignal():
-    log.write(timestamp() + ' [INFO] ups monitoring active')
+def activeFunc():
+    log = open("log.txt", "a")
+    log.write(timelogFunc() + ' [INFO] ups monitoring active\n')
+    log.close()
 
-# TEST MODE
-if testMode == True:
-    # POWER ASSIST API
+def upsmonitorFunc():
+    global shutdownFlag
+    log = open("log.txt", "a")
+    # TEST POWER ASSIST API AVAILABILITY
+    try:
+        response = requests.get('http://' + vertivHost + ':8210/api/PowerAssist', timeout=1)
+    except requests.exceptions.ConnectionError:
+        log.write(timelogFunc() + ' [ERROR] powerassist host unavailable\n')
+        errorFlagVertiv = True
+    else:
+        jsondict = response.json()
+        isAcPresent = (jsondict[0]['status']['isAcPresent'])
+        runTimeToEmpty = (jsondict[0]['status']['runTimeToEmptyInSeconds'])
+        percentLoad = (jsondict[0]['status']['percentLoad'])
+        isCharging = (jsondict[0]['status']['isCharging'])
+        errorFlagVertiv = False
+    # TEST SSH AVAILABILITY
+    response = os.system('ping -c 1 ' + sshHost + '>/dev/null')
+    if response != 0:
+        log.write(timelogFunc() + ' [ERROR] ssh host unavailable\n')
+        errorFlagSSH = True
+    else:
+        errorFlagSSH = False
+    # ACTIONS
+    if errorFlagSSH == False and errorFlagVertiv == False:
+        if infoFlag == True:
+            log.write(f'{timelogFunc()} [INFO] ac-connected:{isAcPresent}; is-charging:{isCharging}; load:{percentLoad}%; runtime-till-empty:{runTimeToEmpty}s')
+        if isAcPresent == False:
+            timeToShutdown = (runTimeToEmpty - runTimeLeft)
+            log.write(timelogFunc() + ' [WARNING] ac lost, shutdown in ', timeToShutdown,' seconds\n')
+            if runTimeToEmpty < runTimeLeft:
+                    log.write(timelogFunc() + ' [ALERT] shutdown now\n')
+                    ssh = paramiko.SSHClient()
+                    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                    ssh.connect(sshHost, port, username, password)
+                    stdin, stdout, stderr = ssh.exec_command('/sbin/shutdown.sh && /sbin/poweroff')
+                    stdin, stdout, stderr = ssh.exec_command('ls')
+                    shutdownFlag = True
+    else:
+        print(timelogFunc() + ' [ERROR] ups monitoring disabled')
+        log.write(timelogFunc() + ' [ERROR] ups monitoring disabled\n')
+    log.close()
+
+def testFunc():
+    print(timelogFunc() + ' [DEBUG] running testmode')
     try:
         requests.get('http://' + vertivHost + ':8210/api/PowerAssist', timeout=1)
     except requests.exceptions.ConnectionError:
-        print(timestamp() + ' [ERROR] powerassist host unavailable')
-    # SSH
-    response = os.system('ping -c 1 ' + sshHost)
+        print(timelogFunc() + ' [ERROR] powerassist host unavailable')
+    response = os.system("ping -c 1 " + sshHost + '>/dev/null')
     if response == 0:
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -49,57 +98,19 @@ if testMode == True:
         print(resp)
         print('ls command executed, check output above')
     else:
-        print(timestamp() + ' [ERROR] ssh host unavailable')
-    exit()
+        print(timelogFunc() + ' [ERROR] ssh host unavailable')
+    sys.exit()
 
-# OPEN LOG
-log = open("log.txt", "a")
-
-# UPS MONITORING
+### START ###
+if testFlag == True:
+    testFunc()
+print(timelogFunc() + ' [INFO] daemon started, see log for further information')
 while shutdownFlag == False:
-    # SIGN OF LIFE SIGNAL
-    schedule.every().day.at("00:00").do(lifeSignal)
-
-    # POWER ASSIST API
-    try:
-        response = requests.get('http://' + vertivHost + ':8210/api/PowerAssist', timeout=1)
-    except requests.exceptions.ConnectionError:
-        log.write(timestamp() + ' [ERROR] powerassist host unavailable\n')
-        errorFlagVertiv = True
-    else:
-        jsondict = response.json()
-        acPresent = (jsondict[0]['status']['isAcPresent'])
-        timeTillEmpty = (jsondict[0]['status']['runTimeToEmptyInSeconds'])
-        errorFlagVertiv = False
-
-    # SSH
-    response = os.system('ping -c 1 ' + sshHost + '>/dev/null')
-    if response != 0:
-        log.write(timestamp() + ' [ERROR] ssh host unavailable\n')
-        errorFlagSSH = True
-    else:
-        errorFlagSSH = False
-
-    # ACTIONS
-    if errorFlagSSH==False and errorFlagVertiv==False:
-        if initialFlag == True:
-            initialFlag = False
-            print(timestamp() + ' [INFO] ups monitoring started, see log')
-            log.write(timestamp() + ' [INFO] ups monitoring started\n')
-        if acPresent == False:
-            timeToShutdown = (timeTillEmpty - runTimeLeft)
-            log.write(timestamp() + ' [WARNING] ac lost. shutdown in ', timeToShutdown,' seconds\n')
-            if timeTillEmpty < runTimeLeft:
-                log.write[timestamp() + ' [ALERT] shutdown now\n']
-                ssh = paramiko.SSHClient()
-                ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-                ssh.connect(sshHost, port, username, password)
-                stdin, stdout, stderr = ssh.exec_command('/sbin/shutdown.sh && /sbin/poweroff')
-                shutdownFlag = True
-                log.close()
-    else:
-        print(timestamp() + ' [ERROR] ups monitoring disabled, see log')
-        log.write(timestamp() + ' [ERROR] ups monitoring disabled\n')
-
-    log.flush()
-    sleep(30)
+    timeFunc()
+    if timeHour != lasttimeHour: # run activeFunc() every hour
+        lasttimeHour = timeHour
+        activeFunc()
+    if timeMinute != lasttimeMinute: # run upsmonitorFunc() every minute
+        lasttimeMinute = timeMinute
+        upsmonitorFunc()
+    time.sleep(1)
