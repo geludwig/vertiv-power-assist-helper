@@ -1,6 +1,7 @@
 ### MODULES ###
 import requests
 import os
+import subprocess
 import paramiko
 import sys
 import time
@@ -43,24 +44,29 @@ def upsmonitorFunc():
     log = open("log.txt", "a")
     # TEST POWER ASSIST API AVAILABILITY
     try:
-        response = requests.get('http://' + vertivHost + ':8210/api/PowerAssist', timeout=1)
-    except requests.exceptions.ConnectionError:
-        log.write(timelogFunc() + ' [ERROR] powerassist host unavailable\n')
+        responseVertiv = requests.get('http://' + vertivHost + ':8210/api/PowerAssist', timeout=1)
+    except requests.exceptions.Timeout:
+        log.write(timelogFunc() + ' [ERROR] powerassist request timeout\n')
         errorFlagVertiv = True
+    except requests.exceptions.RequestException:
+        log.write(timelogFunc() + ' [ERROR] powerassist request fatal error\n')
+        errorFlagVertiv = True        
     else:
-        jsondict = response.json()
+        jsondict = responseVertiv.json()
         isAcPresent = (jsondict[0]['status']['isAcPresent'])
         runTimeToEmpty = (jsondict[0]['status']['runTimeToEmptyInSeconds'])
         percentLoad = (jsondict[0]['status']['percentLoad'])
         isCharging = (jsondict[0]['status']['isCharging'])
         errorFlagVertiv = False
     # TEST SSH AVAILABILITY
-    response = os.system('ping -c 1 ' + sshHost + '>/dev/null')
-    if response != 0:
+    try:
+        subprocess.run(['ping', '-c1', 'sshHost'], check = True)
+    except subprocess.CalledProcessError:
         log.write(timelogFunc() + ' [ERROR] ssh host unavailable\n')
         errorFlagSSH = True
     else:
         errorFlagSSH = False
+
     # ACTIONS
     if errorFlagSSH == False and errorFlagVertiv == False:
         if infoFlag == True:
@@ -101,12 +107,12 @@ def testFunc():
         print(timelogFunc() + ' [ERROR] ssh host unavailable')
     sys.exit()
 
-### START ###
+### START LOOP ###
 if testFlag == True:
     testFunc()
 print(timelogFunc() + ' [INFO] daemon started, see log for further information')
 while shutdownFlag == False:
-    timeFunc()
+    timeFunc() # dirty cron like function
     if timeHour != lasttimeHour: # run activeFunc() every hour
         lasttimeHour = timeHour
         activeFunc()
