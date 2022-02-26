@@ -20,6 +20,8 @@ password = '<pw ssh>'
 shutdownFlag = False
 lasttimeMinute = None
 lasttimeHour = None
+lastErrorFlagSSH = False
+lastErrorFlagVertiv = False
 
 ### GLOBAL FUNCTIONS ###
 def timeFunc():
@@ -41,6 +43,8 @@ def activeFunc():
 
 def upsmonitorFunc():
     global shutdownFlag
+    global lastErrorFlagSSH
+    global lastErrorFlagVertiv
     log = open("log.txt", "a")
     # TEST POWER ASSIST API AVAILABILITY
     try:
@@ -59,32 +63,42 @@ def upsmonitorFunc():
         isCharging = (jsondict[0]['status']['isCharging'])
         errorFlagVertiv = False
     # TEST SSH AVAILABILITY
-    try:
-        subprocess.run(['ping', '-c1', 'sshHost'], check = True)
-    except subprocess.CalledProcessError:
-        log.write(timelogFunc() + ' [ERROR] ssh host unavailable\n')
-        errorFlagSSH = True
-    else:
-        errorFlagSSH = False
+    with open(os.devnull, 'w') as DEVNULL:
+        try:
+            subprocess.check_call(
+            ['ping', '-c', '2', sshHost],
+            stdout=DEVNULL,  # suppress output
+            stderr=DEVNULL
+            )
+            errorFlagSSH = False
+        except subprocess.CalledProcessError:
+            errorFlagSSH = True
 
     # ACTIONS
     if errorFlagSSH == False and errorFlagVertiv == False:
+        if lastErrorFlagSSH == True or lastErrorFlagVertiv == True:
+            print(timelogFunc() + ' [ERROR] ups monitoring back online')
+            log.write(timelogFunc() + ' [ERROR] ups monitoring back online\n')
         if infoFlag == True:
             log.write(f'{timelogFunc()} [INFO] ac-connected:{isAcPresent}; is-charging:{isCharging}; load:{percentLoad}%; runtime-till-empty:{runTimeToEmpty}s')
         if isAcPresent == False:
             timeToShutdown = (runTimeToEmpty - runTimeLeft)
+            print(timelogFunc() + ' [WARNING] ac lost, shutdown in ', timeToShutdown,' seconds')
             log.write(timelogFunc() + ' [WARNING] ac lost, shutdown in ', timeToShutdown,' seconds\n')
             if runTimeToEmpty < runTimeLeft:
+                    print(timelogFunc() + ' [ALERT] shutdown now')
                     log.write(timelogFunc() + ' [ALERT] shutdown now\n')
                     ssh = paramiko.SSHClient()
                     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
                     ssh.connect(sshHost, port, username, password)
-                    stdin, stdout, stderr = ssh.exec_command('/sbin/shutdown.sh && /sbin/poweroff')
+                    #stdin, stdout, stderr = ssh.exec_command('/sbin/shutdown.sh && /sbin/poweroff')
                     stdin, stdout, stderr = ssh.exec_command('ls')
                     shutdownFlag = True
     else:
-        print(timelogFunc() + ' [ERROR] ups monitoring disabled')
-        log.write(timelogFunc() + ' [ERROR] ups monitoring disabled\n')
+        print(timelogFunc() + ' [ERROR] ups monitoring error')
+        log.write(timelogFunc() + ' [ERROR] ups monitoring error\n')
+        lastErrorFlagSSH = errorFlagSSH
+        lastErrorFlagVertiv = errorFlagVertiv
     log.close()
 
 def testFunc():
@@ -110,7 +124,7 @@ def testFunc():
 ### START LOOP ###
 if testFlag == True:
     testFunc()
-print(timelogFunc() + ' [INFO] daemon started, see log for further information')
+print(timelogFunc() + ' [INFO] ups daemon started, see log for further information')
 while shutdownFlag == False:
     timeFunc() # dirty cron like function
     if timeHour != lasttimeHour: # run activeFunc() every hour
