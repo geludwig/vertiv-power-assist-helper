@@ -79,6 +79,8 @@ def upsmonitorFunc():
         if lastErrorFlagSSH == True or lastErrorFlagVertiv == True:
             print(timelogFunc() + ' [ERROR] ups monitoring back online')
             log.write(timelogFunc() + ' [ERROR] ups monitoring back online\n')
+            lastErrorFlagSSH = errorFlagSSH
+            lastErrorFlagVertiv = errorFlagVertiv
         if infoFlag == True:
             log.write(f'{timelogFunc()} [INFO] ac-connected:{isAcPresent}; is-charging:{isCharging}; load:{percentLoad}%; runtime-till-empty:{runTimeToEmpty}s')
         if isAcPresent == False:
