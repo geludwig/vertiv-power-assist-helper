@@ -93,8 +93,7 @@ def upsmonitorFunc():
                     ssh = paramiko.SSHClient()
                     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
                     ssh.connect(sshHost, port, username, password)
-                    #stdin, stdout, stderr = ssh.exec_command('/sbin/shutdown.sh && /sbin/poweroff')
-                    stdin, stdout, stderr = ssh.exec_command('ls')
+                    stdin, stdout, stderr = ssh.exec_command('/sbin/shutdown.sh && /sbin/poweroff')
                     shutdownFlag = True
     else:
         print(timelogFunc() + ' [ERROR] ups monitoring error')
