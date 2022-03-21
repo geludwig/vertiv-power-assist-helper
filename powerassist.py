@@ -15,6 +15,7 @@ sshHost = '<ip/url>'
 port = 22
 username = '<usr ssh>'
 password = '<pw ssh>'
+definedHour = 12
 
 ### VARIABLES ###
 shutdownFlag = False
@@ -128,9 +129,13 @@ if testFlag == True:
 print(timelogFunc() + ' [INFO] ups daemon started, see log for further information')
 while shutdownFlag == False:
     timeFunc() # dirty cron like function
-    if timeHour != lasttimeHour: # run activeFunc() every hour
+    if timeHour != lasttimeHour: # run activeFunc() once per day at "definedHour"
         lasttimeHour = timeHour
-        activeFunc()
+        if timeHour == definedHour:
+            activeFunc()
+#    if timeHour != lasttimeHour: # run activeFunc() every hour
+#        lasttimeHour = timeHour
+#        activeFunc()
     if timeMinute != lasttimeMinute: # run upsmonitorFunc() every minute
         lasttimeMinute = timeMinute
         upsmonitorFunc()
