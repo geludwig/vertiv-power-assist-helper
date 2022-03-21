@@ -2,6 +2,7 @@
 
 ########################################
 # THIS SCRIPT IS OBSOLETE - DO NOT USE #
+#     NEW PHYTON SCRIPT AVAILABLE      #
 ########################################
 
 # VARIABLES
