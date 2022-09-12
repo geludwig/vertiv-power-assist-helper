@@ -12,10 +12,13 @@ Tested unsuccessful on Ubuntu Server 22.04 and Raspberry Pi B+ (Raspberry OS Lit
 
 ### INSTALLATION
 1) Get PowerAssist.deb
-  wget "https://downloads1.vertivco.com/Trellis/Power%20Assist/v1.35%20Windows%20v1.25%20Linux%20August%202021/Power%20Assist%20Linux%201.25.zip"
+  
+wget "https://downloads1.vertivco.com/Trellis/Power%20Assist/v1.35%20Windows%20v1.25%20Linux%20August%202021/Power%20Assist%20Linux%201.25.zip"
 2) Check status
-  systemctl status ups.monitoringservice.service
+
+systemctl status ups.monitoringservice.service
 3) Check webpage
-  http://<ip>:8210/api/PowerAssist
+ 
+http://<ip>:8210/api/PowerAssist
 
 This is a python script and must therefore be run in foreground or has to be used with "screen". Please take note which modules are required and install if needed.
