@@ -6,8 +6,8 @@ The API of a running VERTIV Power Assist instance is available via http://<IP>:8
 The script will monitor if AC is present or lost and will initiate a (ssh) command when the remaining runtime of the ups is smaller than a specified value. In the provided script it will ssh to a running ESXi host and inits a shutdown.
 
 ### REQUIREMENTS
-SYSTEM: Ubuntu Server 20.04 (Focal Fossa)
-UPS: Vertiv Edge (USB)
+- SYSTEM: Ubuntu Server 20.04 (Focal Fossa)
+- UPS: Vertiv Edge (USB)
 
 Tested unsuccessful on Ubuntu Server 22.04 and Raspberry Pi B+ (Raspberry OS Lite). Needs investigation.
 
