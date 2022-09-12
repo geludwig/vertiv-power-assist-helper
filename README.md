@@ -8,6 +8,7 @@ The script will monitor if AC is present or lost and will initiate a (ssh) comma
 ### REQUIREMENTS
 SYSTEM: Ubuntu Server 20.04 (Focal Fossa)
 UPS: Vertiv Edge (USB)
+
 Tested unsuccessful on Ubuntu Server 22.04 and Raspberry Pi B+ (Raspberry OS Lite). Needs investigation.
 
 ### INSTALLATION
