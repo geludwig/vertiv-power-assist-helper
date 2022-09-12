@@ -12,7 +12,7 @@ Tested unsuccessful on Ubuntu Server 22.04 and Raspberry Pi B+ (Raspberry OS Lit
 
 ### INSTALLATION
 1) Get PowerAssist.deb
-  wget "https://downloads1.vertivco.com/Trellis/Power Assist/v1.35 Windows v1.25 Linux August 2021/Power Assist Linux 1.25.zip"
+  wget "https://downloads1.vertivco.com/Trellis/Power%20Assist/v1.35%20Windows%20v1.25%20Linux%20August%202021/Power%20Assist%20Linux%201.25.zip"
 2) Check status
   systemctl status ups.monitoringservice.service
 3) Check webpage
