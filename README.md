@@ -15,22 +15,23 @@ Tested unsuccessful on Ubuntu Server 22.04 and Raspberry Pi B+ (Raspberry OS Lit
 ```
 wget "https://downloads1.vertivco.com/Trellis/Power%20Assist/v1.35%20Windows%20v1.25%20Linux%20August%202021/Power%20Assist%20Linux%201.25.zip"
 ```
+  
 2) Install
 ```
 sudo apt install ./Powerassist.deb
 ```
 
-2.1) Install default-jre if required
+3) Install default-jre if required
 ```
 sudo apt install default-jre
 ```
   
-3) Check status
+4) Check status
 ```
 systemctl status ups.monitoringservice.service
 ```
   
-3) Check webpage
+5) Check webpage
 ```
 http://<ip>:8210/api/PowerAssist
 ```
