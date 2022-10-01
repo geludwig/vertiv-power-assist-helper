@@ -140,3 +140,4 @@ while shutdownFlag == False:
         lasttimeMinute = timeMinute
         upsmonitorFunc()
     time.sleep(1)
+    
