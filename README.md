@@ -39,9 +39,12 @@ This is a python script and must therefore be run in foreground or has to be use
 
 1) Copy "powerassist.py" and "start_powerassist.sh" into desired folder
 2) Edit "start_powerassist.sh" and add correct folder path
+```
+sudo nano start_powerassist.sh
+```
 3) Make bash executable
 ```
-chmod +x start_powerassist.sh
+sudo chmod +x start_powerassist.sh
 ```
 4) Start "start_powerassist.sh"
 ```
