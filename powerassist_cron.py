@@ -58,7 +58,7 @@ def upsFunc():
                     ssh = paramiko.SSHClient()
                     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
                     ssh.connect(sshHost, port, username, password)
-                    #stdin, stdout, stderr = ssh.exec_command('/sbin/shutdown.sh && /sbin/poweroff')
+                    stdin, stdout, stderr = ssh.exec_command('/sbin/shutdown.sh && /sbin/poweroff')
         else:
             print(timeFunc() + ' [INFO] system normal, ', runTimeToEmpty/60, ' minutes runtime with current load')
     # ACTIONS TESTMODE
