@@ -1,10 +1,13 @@
-
 ### MODULES ###
-import requests
-import os
-import paramiko
-import subprocess
-import time
+try:
+    import requests
+    import os
+    import paramiko
+    import subprocess
+    import time
+except ModuleNotFoundError as err:
+    print(err, ". Install with 'pip' (python -m pip install <module>)")
+    exit()
 
 ### VARIABLES ###
 deltaTime = 900             # ups runtime left before shutdown in seconds, keep in mind that cron intervall must be smaller than deltaTime
