@@ -61,4 +61,6 @@ KEY COMBO: STRG + A + D
 
 ### CRONJOB SCRIPT
 {to do}
+```
 * * * * * $(which python3) /<PATH>/powerassist_cron.py >> /<PATH>/powerassist.log 2>&1
+```
