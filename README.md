@@ -61,6 +61,11 @@ KEY COMBO: STRG + A + D
 
 ### CRONJOB SCRIPT
 {to do}
+1) Add cronjob (without sudo)
+```
+crontab -e
+```
+2) Add following syntax (replace <PATH> with the actual path of the script)= 
 ```
 * * * * * $(which python3) /<PATH>/powerassist_cron.py >> /<PATH>/powerassist.log 2>&1
 ```
