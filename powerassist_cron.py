@@ -24,9 +24,9 @@ def timeFunc():
     currentTime = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())
     return currentTime
 
-def minuteFunc():
+def activeFunc():
     global hourTime
-    hourTime = time.strftime('%M', time.gmtime())
+    hourTime = time.strftime('%H%M', time.gmtime())
     return hourTime
 
 def upsFunc():
@@ -68,8 +68,8 @@ def upsFunc():
                     ssh.connect(sshHost, port, username, password)
                     stdin, stdout, stderr = ssh.exec_command('/sbin/shutdown.sh && /sbin/poweroff')
         else:
-            minute = minuteFunc()
-            if minute == "59":
+            activeTime = activeFunc()
+            if activeTime == "1200":
                 print(timeFunc() + ' [INFO] powerassist active')
 
     # ACTIONS TESTMODE
