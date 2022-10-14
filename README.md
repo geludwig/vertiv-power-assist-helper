@@ -60,7 +60,6 @@ KEY COMBO: STRG + A + D
 ```
 
 ### CRONJOB SCRIPT
-{to do}
 1) Add cronjob (without sudo)
 ```
 crontab -e
