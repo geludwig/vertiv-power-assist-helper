@@ -65,7 +65,8 @@ KEY COMBO: STRG + A + D
 ```
 crontab -e
 ```
-2) Add following syntax (replace <PATH> with the actual path of the script)= 
+2) Add following syntax (replace PATH with the actual path of the script) and save
 ```
 * * * * * $(which python3) /<PATH>/powerassist_cron.py >> /<PATH>/powerassist.log 2>&1
 ```
+3) Setting the testFlag variable inside the powerassist_cron.py script to True should add some output to the log file.
