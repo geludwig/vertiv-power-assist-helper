@@ -6,7 +6,7 @@ try:
     import subprocess
     import time
 except ModuleNotFoundError as err:
-    print(err, ". Install with 'pip' (python -m pip install <module>)")
+    print(err, ". Install with 'pip' first!")
     exit()
 
 ### VARIABLES ###
@@ -24,15 +24,20 @@ def timeFunc():
     currentTime = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())
     return currentTime
 
+def minuteFunc():
+    global hourTime
+    hourTime = time.strftime('%M', time.gmtime())
+    return hourTime
+
 def upsFunc():
     # TEST POWER ASSIST API AVAILABILITY
     try:
         responseVertiv = requests.get('http://' + vertivHost + ':8210/api/PowerAssist', timeout=1)
     except requests.exceptions.Timeout:
-        print(timeFunc() + ' [ERROR] powerassist request timeout\n')
+        print(timeFunc() + ' [ERROR] powerassist request timeout')
         errorVertiv = True
     except requests.exceptions.RequestException:
-        print(timeFunc() + ' [ERROR] powerassist request error\n')
+        print(timeFunc() + ' [ERROR] powerassist request error')
         errorVertiv = True        
     else:
         jsondict = responseVertiv.json()
@@ -63,7 +68,10 @@ def upsFunc():
                     ssh.connect(sshHost, port, username, password)
                     stdin, stdout, stderr = ssh.exec_command('/sbin/shutdown.sh && /sbin/poweroff')
         else:
-            print(timeFunc() + ' [INFO] system normal, ', runTimeToEmpty/60, ' minutes runtime with current load')
+            minute = minuteFunc()
+            if minute == "59":
+                print(timeFunc() + ' [INFO] powerassist active')
+
     # ACTIONS TESTMODE
     if testFlag == True:
         print(timeFunc() + ' [DEBUG] testmode active, see output for response')
