@@ -36,34 +36,34 @@ http://<ip>:8210/api/PowerAssist
 ### STANDALONE SCRIPT
 This is a python script and must therefore be run in foreground or has to be used with "screen". Please take note which modules are required and install if needed. Check out the cron version which is more user friendly down below.
 
-1) Copy "powerassist.py" and "start_powerassist.sh" into desired folder
-2) Edit "start_powerassist.sh" and add correct folder path
+1) Copy "powerassist.py" and "start_powerassist.sh" into desired folder.
+2) Edit "start_powerassist.sh" and add correct folder path.
 ```
 sudo nano start_powerassist.sh
 ```
-3) Make bash executable
+3) Make bash executable.
 ```
 sudo chmod +x start_powerassist.sh
 ```
-4) Start "start_powerassist.sh"
+4) Start "start_powerassist.sh".
 ```
 sudo ./start_powerassist.sh
 ```
-5) Resume to screen
+5) Resume to screen.
 ```
 sudo screen -r powerassist
 ```
-6) Exit screen
+6) Exit screen.
 ```
 KEY COMBO: STRG + A + D
 ```
 
 ### CRONJOB SCRIPT
-1) Add cronjob (without sudo)
+1) Add cronjob (without sudo).
 ```
 crontab -e
 ```
-2) Add following syntax (replace PATH with the actual path of the script) and save
+2) Add following syntax (replace PATH with the actual path of the script) and save. Here the script is executed every 1 minute.
 ```
 * * * * * $(which python3) /<PATH>/powerassist_cron.py >> /<PATH>/powerassist.log 2>&1
 ```
