@@ -34,7 +34,7 @@ http://<ip>:8210/api/PowerAssist
 ```
 
 ### STANDALONE SCRIPT
-This is a python script and must therefore be run in foreground or has to be used with "screen". Please take note which modules are required and install if needed.
+This is a python script and must therefore be run in foreground or has to be used with "screen". Please take note which modules are required and install if needed. Check out the cron version which is more user friendly down below.
 
 1) Copy "powerassist.py" and "start_powerassist.sh" into desired folder
 2) Edit "start_powerassist.sh" and add correct folder path
