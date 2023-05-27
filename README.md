@@ -1,4 +1,4 @@
-# VertivPowerAssistScript
+# Vertiv PowerAssist for Linux
 - This shell script will monitor a running VERTIV PowerAssist instance via USB.
 
 - When AC is lost it initiates a (ssh) command, when the remaining runtime of the ups is smaller than a specified value. In the provided script it will ssh to a running ESXi host and inits a shutdown.
