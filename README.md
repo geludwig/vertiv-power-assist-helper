@@ -67,7 +67,7 @@ crontab -e
 ```
 * * * * * $(which python3) /<PATH>/powerassist_cron.py >> /<PATH>/powerassist.log 2>&1
 ```
-3) Setting the testFlag variable inside the powerassist_cron.py script to True should add some output to the log file.
+3) Setting the testFlag variable in powerassist_cron.py True should add some output to the log file. Change to False after testing.
 
 
 ### SETUP SCRIPT
