@@ -1,7 +1,7 @@
 # Vertiv PowerAssist for Linux
-- This shell script will monitor a running VERTIV PowerAssist instance via USB.
+- This python script will monitor a running VERTIV PowerAssist instance via USB.
 
-- When AC is lost it initiates a (ssh) command, when the remaining runtime of the ups is smaller than a specified value. In the provided script it will ssh to a running ESXi host and inits a shutdown.
+- When AC is lost the script initiates a (custom) command, when the remaining runtime of the ups is smaller than a specified value. In the provided script it connects to a ESXi host via ssh and inits a shutdown.
 
 ### REQUIREMENTS
 - SYSTEM: Ubuntu Server 20.04 (more recent versions may not be supported by Vertiv)
