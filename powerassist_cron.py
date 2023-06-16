@@ -12,7 +12,7 @@ except ModuleNotFoundError as err:
 ### VARIABLES ###
 deltaTime = 900             # ups runtime left before shutdown in seconds, keep in mind that cron intervall must be smaller than deltaTime
 testFlag = False            # shutdown command will not be sent if set to True, instead 'ls' command is sent to test ssh connection
-vertivHost = '<ip/url>'     # for example '192.168.200.1' or '127.0.0.1' if an on the same host as the Vertiv instance
+vertivHost = '<ip/url>'     # for example '192.168.200.1' or '127.0.0.1' if executed on the same host as the Vertiv instance
 sshHost = '<ip/url>'        # for example '192.168.200.40'
 username = '<usr ssh>'
 password = '<pw ssh>'
