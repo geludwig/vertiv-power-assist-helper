@@ -70,8 +70,7 @@ crontab -e
 3) Setting the testFlag variable in powerassist_cron.py True should add some output to the log file. Change to False after testing.
 
 
-### SETUP SCRIPT
-Change the follpwing parameters inside the python script for your needs:
+### PARAMETERS
 ```
 deltaTime = 900             # ups runtime left before shutdown in seconds, keep in mind that cron intervall must be smaller than deltaTime
 testFlag = False            # shutdown command will not be sent if set to True, instead 'ls' command is sent to test ssh connection
