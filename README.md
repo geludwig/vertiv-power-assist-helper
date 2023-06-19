@@ -4,7 +4,7 @@
 - When AC is lost the script initiates a (custom) command, when the remaining runtime of the ups is smaller than a specified value. In the provided script it connects to a ESXi host via ssh and inits a shutdown.
 
 ### REQUIREMENTS
-- SYSTEM: Ubuntu Server 20.04 (more recent versions may not be supported by Vertiv)
+- SYSTEM: Ubuntu Server 20.04 (newer versions may not be supported by Vertiv)
 - UPS: Vertiv Edge (USB)
 
 ### INSTALLATION
@@ -67,7 +67,7 @@ crontab -e
 ```
 * * * * * $(which python3) /<PATH>/powerassist_cron.py >> /<PATH>/powerassist.log 2>&1
 ```
-3) Setting the testFlag variable in powerassist_cron.py True should add some output to the log file. Change to False after testing.
+3) Setting the testFlag variable in powerassist_cron.py to True should add some output to the log file. Change to False after testing.
 
 
 ### PARAMETERS
