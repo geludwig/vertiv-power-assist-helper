@@ -25,7 +25,7 @@ unzip PowerAssist_Linux_1.4.0.zip
 
 3) Install
 ```
-sudo apt install ./Powerassist.deb
+sudo apt install ./PowerAssist_1.4.0_amd64.deb
 ```
 
 4) Install default-jre if required
@@ -40,7 +40,7 @@ systemctl status ups.monitoringservice.service
   
 6) Check webpage
 ```
-http://<ip>:8210/api/PowerAssist
+http://<ip of host>:8210/api/PowerAssist
 ```
 
 ### CRONJOB SCRIPT
@@ -52,7 +52,7 @@ crontab -e
 ```
 * * * * * $(which python3) /<PATH>/powerassist_cron.py >> /<PATH>/powerassist.log 2>&1
 ```
-3) Setting the testFlag variable in powerassist_cron.py to True should add some output to the log file. Change to False after testing.
+3) Setting the testFlag variable in powerassist_cron.py to "True" should add some output to the log file. Change to False after testing.
 
 
 ### PARAMETERS
