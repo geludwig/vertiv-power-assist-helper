@@ -6,61 +6,38 @@
 https://downloads1.vertivco.com/Trellis/Power%20Assist/v1.4/Vertiv%20Power%20Assist%20Release%20Notes%20v1.4_VERTIV.pdf
 
 ### REQUIREMENTS
-- SYSTEM: Ubuntu Server 20.04 (newer versions may not be supported by Vertiv)
+- OS: Tested on Ubunu 22.04 LTS
 - UPS: Vertiv Edge (USB)
 
 ### INSTALLATION
-1) Get PowerAssist.deb
+1) Get PowerAssist_Linux_1.4.0.zip
 ```
-wget "https://downloads1.vertivco.com/Trellis/Power%20Assist/v1.35%20Windows%20v1.25%20Linux%20August%202021/Power%20Assist%20Linux%201.25.zip"
+wget "https://downloads1.vertivco.com/Trellis/Power%20Assist/v1.4/PowerAssist_Linux_1.4.0.zip"
 ```
+
+2) Unzip
 ```
-https://downloads1.vertivco.com/Trellis/Power%20Assist/v1.4/PowerAssist_Linux_1.4.0.zip
+unzip PowerAssist_Linux_1.4.0.zip
 ```
-  
-2) Install
+
+3) Install
 ```
 sudo apt install ./Powerassist.deb
 ```
 
-3) Install default-jre if required
+4) Install default-jre if required
 ```
 sudo apt install default-jre
 ```
   
-4) Check status
+5) Check status
 ```
 systemctl status ups.monitoringservice.service
 ```
   
-5) Check webpage
+6) Check webpage
 ```
 http://<ip>:8210/api/PowerAssist
-```
-
-### STANDALONE SCRIPT
-This is a python script and must therefore be run in foreground or has to be used with "screen". Please take note which modules are required and install if needed. Check out the cron version which is more user friendly down below.
-
-1) Copy "powerassist.py" and "start_powerassist.sh" into desired folder.
-2) Edit "start_powerassist.sh" and add correct folder path.
-```
-sudo nano start_powerassist.sh
-```
-3) Make bash executable.
-```
-sudo chmod +x start_powerassist.sh
-```
-4) Start "start_powerassist.sh".
-```
-sudo ./start_powerassist.sh
-```
-5) Resume to screen.
-```
-sudo screen -r powerassist
-```
-6) Exit screen.
-```
-KEY COMBO: STRG + A + D
 ```
 
 ### CRONJOB SCRIPT
