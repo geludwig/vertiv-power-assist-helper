@@ -1,4 +1,4 @@
-### MODULES ###
+# MODULES
 try:
     import requests
     import os
@@ -9,7 +9,7 @@ except ModuleNotFoundError as err:
     print(err, ". Install with 'pip' first!")
     exit()
 
-### VARIABLES ###
+# VARIABLES
 deltaTime = 900             # ups runtime left before shutdown in seconds, keep in mind that cron intervall must be smaller than deltaTime
 testFlag = False            # shutdown command will not be sent if set to True, instead 'ls' command is sent to test ssh connection
 vertivHost = '<ip/url>'     # for example '192.168.200.1' or '127.0.0.1' if executed on the same host as the Vertiv instance
@@ -18,7 +18,7 @@ username = '<usr ssh>'
 password = '<pw ssh>'
 port = 22
 
-### FUNCTIONS ###
+# FUNCTIONS
 def timeFunc():
     global currentTime
     currentTime = time.strftime('%Y-%m-%d %H:%M:%S', time.gmtime())
@@ -62,6 +62,7 @@ def upsFunc():
             timeToShutdown = (runTimeToEmpty - deltaTime)
             print(timeFunc() + ' [WARNING] ac lost, shutdown in ', timeToShutdown,' seconds')
             if runTimeToEmpty < deltaTime:
+                    # COMMAND ISSUED IF RUNTIME LOWER THAN BATTERY LIFE
                     print(timeFunc() + ' [ALERT] shutdown now')
                     ssh = paramiko.SSHClient()
                     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -72,7 +73,7 @@ def upsFunc():
             if activeTime == "1200":
                 print(timeFunc() + ' [INFO] powerassist active')
 
-    # ACTIONS TESTMODE
+    # DEBUG MODE
     if testFlag == True:
         print(timeFunc() + ' [DEBUG] testmode active, see output for response')
         if errorSsh == False and errorVertiv == False:
