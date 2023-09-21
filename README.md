@@ -1,12 +1,12 @@
 # Vertiv PowerAssist for Linux
-- This python script will monitor a running VERTIV PowerAssist instance via USB.
+- This python script monitors a Vertiv UPS connected via USB.
 
 - When AC is lost the script initiates a (custom) command, when the remaining runtime of the ups is smaller than a specified value. In the provided script it connects to a ESXi host via ssh and inits a shutdown.
 
 https://downloads1.vertivco.com/Trellis/Power%20Assist/v1.4/Vertiv%20Power%20Assist%20Release%20Notes%20v1.4_VERTIV.pdf
 
 ### REQUIREMENTS
-- OS: Tested on Ubunu 22.04 LTS
+- OS: Tested on Ubunu 22.04 LTS Server (headless)
 - UPS: Vertiv Edge (USB)
 
 ### INSTALLATION
