@@ -45,9 +45,6 @@ def checkUpsApi():
     jsondict = responseVertiv.json()
     isAcPresent = (jsondict[0]['status']['isAcPresent'])
     runTimeToEmpty = (jsondict[0]['status']['runTimeToEmptyInSeconds'])
-
-    isAcPresent = False
-
     if isAcPresent == False:
         if runTimeToEmpty > MINIMUMRUNTIMELEFT:
             runTimeLeft = runTimeToEmpty - MINIMUMRUNTIMELEFT
