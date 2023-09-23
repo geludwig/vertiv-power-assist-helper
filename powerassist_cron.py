@@ -35,14 +35,9 @@ def currentTime():
 
 # HEARTBEAT TIME
 def heartbeatTime():
-    global hour_time
-    hour_time = time.strftime('%H%M', time.gmtime())
-    return hour_time
-
-# HEARTBEAT
-def heartbeat():
-    if heartbeatTime() == '1200':
-        print(currentTime() + ' [INFO] powerassist active')
+    # returns minute
+    heartbeat_time = time.strftime('%M', time.gmtime())
+    return heartbeat_time
 
 # CKECK UPS STATUS
 def checkUpsApi():
@@ -143,16 +138,18 @@ try:
         if runTimeLeft == 0:
             print(f'[DEBUG] ssh command sent.')
         elif isAcPresent == False:
-            print(f'[DEBUG] {str(runTimeLeft)} seconds runtime left.')
+            print(f'[DEBUG] AC lost. {str(runTimeLeft)} seconds runtime left.')
         else:
             print(f'[DEBUG] {str(runTimeLeft)} seconds estimated runtime.')
     else:
         if runTimeLeft == 0:
             sendSsh()
         elif isAcPresent == False:
-            print(f'{str(runTimeLeft)} seconds runtime left.')
-        else:
+            print(f' AC lost. {str(runTimeLeft)} seconds runtime left.')
+        elif heartbeatTime() == '00':
             print(f'{str(runTimeLeft)} seconds estimated runtime.')
+        else:
+            pass
 except Exception as err:
     print(err)
     exit()
