@@ -87,7 +87,7 @@ def sendTcp():
     s.connect((TCPIP, TCPPORT))
     s.send('{"MESSAGE"}' + '\n')
 '''
-    
+
 # DEBUG MODE
 def sendSshDebug():
     ssh = paramiko.SSHClient()
@@ -109,12 +109,6 @@ try:
     import socket
     import time
     installModules(module, module_name)
-except Exception as err:
-    print(f'{err}')
-    exit()
-
-try:
-    heartbeat()
 except Exception as err:
     print(f'{err}')
     exit()
