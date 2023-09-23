@@ -55,12 +55,13 @@ crontab -e
 
 
 ### PARAMETERS
+Set the appropriate parameters inside the python script. After testing make sure to set "DEBUG" to "False".
 ```
-deltaTime = 900             # ups runtime left before shutdown in seconds, keep in mind that cron intervall must be smaller than deltaTime
-testFlag = False            # shutdown command will not be sent if set to True, instead 'ls' command is sent to test ssh connection
-vertivHost = '<ip/url>'     # for example '127.0.0.1' if the script is running on the same host as the PowerAssist instance
-sshHost = '<ip/url>'
-username = '<usr ssh>'
-password = '<pw ssh>'
-port = 22
+DEBUG = True
+MINIMUMRUNTIMELEFT = 900    # minimum runtime left in seconds
+VERTIVIP = 'ip'
+SSHIP = 'ip'
+SSHUSER = 'user'
+SSHPASSW = 'pw'
+SSHPORT = 22
 ```
