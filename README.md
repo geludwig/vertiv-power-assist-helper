@@ -47,7 +47,7 @@ http://<ip of host>:8210/api/PowerAssist
 ```
 crontab -e
 ```
-2) Add following syntax (replace PATH with the actual path of the script) and save. Here the script is executed every 1 minute.
+2) Add following syntax (replace PATH with the actual path of the script) and save. Here the script is executed every 1 minute. A lower polling rate should be avoided.
 ```
 * * * * * $(which python3) /<PATH>/powerassist_cron.py >> /<PATH>/powerassist.log 2>&1
 ```
