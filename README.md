@@ -39,7 +39,7 @@ systemctl status ups.monitoringservice.service
   
 6) Check webpage
 ```
-http://<ip of host>:8210/api/PowerAssist
+http://<IP of PowerAssist Host>:8210/api/PowerAssist
 ```
 
 ### CRONJOB SCRIPT
