@@ -51,11 +51,11 @@ crontab -e
 ```
 * * * * * $(which python3) /<PATH>/powerassist_cron.py >> /<PATH>/powerassist.log 2>&1
 ```
-3) Setting the testFlag variable in powerassist_cron.py to "True" should add some output to the log file. Change to False after testing.
+3) Setting the DEBUG variable in powerassist_cron.py to "True" should add some output to the log file. Change to False after testing.
 
 
 ### PARAMETERS
-Set the appropriate parameters inside the python script. After testing make sure to set "DEBUG" to "False".
+Set the appropriate parameters inside the python script. Make sure to set "DEBUG" to "False" after testing.
 ```
 DEBUG = True
 MINIMUMRUNTIMELEFT = 900    # minimum runtime left in seconds
