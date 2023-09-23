@@ -1,7 +1,5 @@
-# Vertiv PowerAssist for Linux
-- This python script monitors a Vertiv UPS connected via USB.
-
-- When AC is lost the script initiates a (custom) command, when the remaining runtime of the ups is smaller than a specified value. In the provided script it connects to a ESXi host via ssh and inits a shutdown.
+# Vertiv PowerAssist Helper Script
+- This python script monitors a Vertiv UPS connected via USB. When AC is lost the script initiates a (custom) ssh command, when the remaining runtime of the ups is smaller than a specified value. In the provided script it connects to a ESXi host via ssh and inits a shutdown.
 
 - Release Notes:
 ```
