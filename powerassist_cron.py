@@ -1,14 +1,21 @@
 
 # VARIABLES
-DEBUG = True
+DEBUG = True    # get debug message every time script is executed and use debug ssh command (ls)
+TCPSEND = True  # send additional message over tcp (for example "fluentd")
+
 MINIMUMRUNTIMELEFT = 900    # minimum runtime left in seconds
 VERTIVIP = 'ip'
+
 SSHIP = 'ip'
 SSHUSER = 'user'
 SSHPASSW = 'pw'
 SSHPORT = 22
 
-# INSTALL MISSING MODULES
+TCPIP = 'ip'
+TCPPORT = 0
+TCPBUFFER = 1024
+
+# INSTALL MISSING MODULES AUTOMATIC
 def installModules(module, module_name):
     i = 0
     for x in module:
@@ -39,9 +46,9 @@ def heartbeatTime():
     heartbeat_time = time.strftime('%M', time.gmtime())
     return heartbeat_time
 
-# CKECK UPS STATUS
+# CHECK UPS STATUS
 def checkUpsApi():
-    responseVertiv = requests.get('http://' + VERTIVIP + ':8210/api/PowerAssist', timeout=1)
+    responseVertiv = requests.get('http://' + VERTIVIP + ':8210/api/PowerAssist', timeout=2)
     jsondict = responseVertiv.json()
     isAcPresent = (jsondict[0]['status']['isAcPresent'])
     runTimeToEmpty = (jsondict[0]['status']['runTimeToEmptyInSeconds'])
@@ -77,27 +84,28 @@ def sendSsh():
     ssh.connect(SSHIP, SSHPORT, SSHUSER, SSHPASSW)
     stdin, stdout, stderr = ssh.exec_command('/sbin/shutdown.sh && /sbin/poweroff')
 
-# SEND TCP MESSAGE
-'''
-def sendTcp():
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((TCPIP, TCPPORT))
-    s.send('{"MESSAGE"}' + '\n')
-'''
-
 # DEBUG MODE
 def sendSshDebug():
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(SSHIP, SSHPORT, SSHUSER, SSHPASSW)
     stdin, stdout, stderr = ssh.exec_command('ls')
-    outlines=stdout.readlines()
-    resp=''.join(outlines)
-    print(f'{resp}')
+    outlines=stdout.readlines(1) # read only first line
+    resp = (''.join(outlines)).rstrip()
+    return resp
+
+# SEND TCP MESSAGE
+def sendTcp(mesg):
+    if TCPSEND == True:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((TCPIP, TCPPORT))
+        sendMesg = '{"device_id":"PowerAssistHelper","mesg":"' + mesg.rstrip() + '"}' + '\n'
+        s.send((sendMesg).encode())
+        s.close()
 
 # MAIN
-module = ['requests', 'paramiko']
-module_name = ['requests', 'paramiko']
+module = ['requests', 'paramiko', 'socket']
+module_name = ['requests', 'paramiko', 'socket']
 try:
     import importlib
     import subprocess
@@ -106,41 +114,36 @@ try:
     import socket
     import time
     installModules(module, module_name)
-except Exception as err:
-    print(f'{err}')
-    exit()
 
-try:
     isAcPresent, runTimeLeft = checkUpsApi()
-except Exception as err:
-    print(f'{err}')
-    exit()
-
-try:
     checkSsh()
-except Exception as err:
-    print(f'{err}')
-    exit()
 
-try:
     if DEBUG == True:
-        print(f'[DEBUG] ssh test command.')
-        sendSshDebug()
-        if runTimeLeft == 0:
-            print(f'[DEBUG] ssh command sent.')
-        elif isAcPresent == False:
-            print(f'[DEBUG] AC lost. {str(runTimeLeft)} seconds runtime left.')
+        mesg = sendSshDebug()
+        print(f'{currentTime()} : {mesg}')
+        sendTcp(mesg)
+        mesg = currentTime() + ' : ' + str(runTimeLeft) + ' seconds estimated runtime.'
+        print(f'{mesg}')
+        sendTcp(mesg)
+
+    if runTimeLeft == 0:
+        if DEBUG == True:
+            mesg = sendSshDebug()
+            print(f'{currentTime()} : {mesg}')
+            sendTcp(mesg)
         else:
-            print(f'[DEBUG] {str(runTimeLeft)} seconds estimated runtime.')
-    else:
-        if runTimeLeft == 0:
             sendSsh()
-        elif isAcPresent == False:
-            print(f' AC lost. {str(runTimeLeft)} seconds runtime left.')
-        elif heartbeatTime() == '00':
-            print(f'{str(runTimeLeft)} seconds estimated runtime.')
-        else:
-            pass
+    elif isAcPresent == False:
+        mesg = currentTime() + ' : AC lost. ' + str(runTimeLeft) + ' seconds runtime left.'
+        print(f'{mesg}')
+        sendTcp(mesg)
+    elif heartbeatTime() == '00':
+        mesg = currentTime() + ' : ' + str(runTimeLeft) + ' seconds estimated runtime.'
+        print(f'{mesg}')
+        sendTcp(mesg)
+    else:
+        pass
 except Exception as err:
-    print(err)
+    print(f'{currentTime()} : {err}')
+    sendTcp(err)
     exit()
