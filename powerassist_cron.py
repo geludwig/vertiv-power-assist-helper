@@ -1,7 +1,7 @@
 
 # VARIABLES
 DEBUG = True    # get debug message every time script is executed and use debug ssh command (ls)
-TCPSEND = True  # send additional message over tcp (for example "fluentd")
+TCPSEND = False  # send additional message over tcp (for example "fluentd")
 
 MINIMUMRUNTIMELEFT = 900    # minimum runtime left in seconds
 VERTIVIP = 'ip'
