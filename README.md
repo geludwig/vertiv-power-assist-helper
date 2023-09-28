@@ -74,7 +74,7 @@ TCPPORT = 0
 TCPBUFFER = 1024
 ```
 
-### Fluentd Config
+### FLUENTD CONFIG
 The following fluentd.config is the most basic example to receive TCP/IP messages in the JSON format.
 ```
 <source>
