@@ -11,7 +11,7 @@ https://downloads1.vertivco.com/Trellis/Power%20Assist/v1.4/Vertiv%20Power%20Ass
 - OS: Tested on Ubunu 22.04 LTS Server (headless)
 - UPS: Vertiv Edge (USB)
 
-### INSTALLATION
+### INSTALLATION (Linux)
 1) Get PowerAssist_Linux_1.4.0.zip
 ```
 wget "https://downloads1.vertivco.com/Trellis/Power%20Assist/v1.4/PowerAssist_Linux_1.4.0.zip"
@@ -42,7 +42,7 @@ systemctl status ups.monitoringservice.service
 http://<IP of PowerAssist Host>:8210/api/PowerAssist
 ```
 
-### CRONJOB SCRIPT
+### CRONJOB SCRIPT (Linux)
 1) Add cronjob (without sudo).
 ```
 crontab -e
