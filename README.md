@@ -73,3 +73,22 @@ TCPIP = 'ip'
 TCPPORT = 0
 TCPBUFFER = 1024
 ```
+
+### Fluentd Config
+The following fluentd.config is the most basic example to receive TCP/IP messages in the JSON format.
+```
+<source>
+  @type tcp
+  tag tcp.events
+  <parse>
+    @type json
+  </parse>
+  port 20000
+  bind 0.0.0.0
+  delimiter "\n"
+</source>
+
+<match tcp.events>
+  @type stdout
+</match>
+```
