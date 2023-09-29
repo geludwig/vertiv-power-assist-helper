@@ -1,7 +1,7 @@
 
 # VARIABLES
 DEBUG = True    # get debug message every time script is executed and use debug ssh command (ls)
-TCPSEND = False  # send additional message over tcp (for example "fluentd")
+TCPSEND = True  # send additional message over tcp (for example "fluentd")
 
 MINIMUMRUNTIMELEFT = 900    # minimum runtime left in seconds
 VERTIVIP = 'ip'
@@ -99,7 +99,7 @@ def sendTcp(mesg):
     if TCPSEND == True:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((TCPIP, TCPPORT))
-        sendMesg = '{"device_id":"PowerAssistHelper","mesg":"' + mesg.rstrip() + '"}' + '\n'
+        sendMesg = '{"device_id":"PowerAssistHelper","mesg":"' + mesg + '"}' + '\n'
         s.send((sendMesg).encode())
         s.close()
 
@@ -144,6 +144,8 @@ try:
     else:
         pass
 except Exception as err:
-    print(f'{currentTime()} : {err}')
-    sendTcp(err)
-    exit()
+    try:
+        print(f'{currentTime()} : {err}')
+        sendTcp(err)
+    except Exception as err:
+        print(f'{currentTime()} : {err}')
