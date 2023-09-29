@@ -8,10 +8,10 @@ https://downloads1.vertivco.com/Trellis/Power%20Assist/v1.4/Vertiv%20Power%20Ass
 ```
 
 ### REQUIREMENTS
-- OS: Tested on Ubunu 22.04 LTS Server (headless)
+- OS: Tested on Ubunu 22.04 LTS Server (headless), compatible with Windows
 - UPS: Vertiv Edge (USB)
 
-### INSTALLATION (Linux)
+### INSTALLATION (LINUX)
 1) Get PowerAssist_Linux_1.4.0.zip
 ```
 wget "https://downloads1.vertivco.com/Trellis/Power%20Assist/v1.4/PowerAssist_Linux_1.4.0.zip"
@@ -42,7 +42,7 @@ systemctl status ups.monitoringservice.service
 http://<IP of PowerAssist Host>:8210/api/PowerAssist
 ```
 
-### CRONJOB SCRIPT (Linux)
+### CRONJOB SCRIPT (LINUX)
 1) Add cronjob (without sudo).
 ```
 crontab -e
@@ -74,8 +74,8 @@ TCPPORT = 0
 TCPBUFFER = 1024
 ```
 
-### FLUENTD CONFIG
-The following fluentd.config is the most basic example to receive TCP/IP messages in the JSON format.
+### FLUENTD CONFIG (OPTIONAL)
+The TCP/IP stack can be used to send logging messages, for example to Fluentd. The following fluentd.config is the most basic example to receive TCP/IP messages in the JSON format.
 ```
 <source>
   @type tcp
