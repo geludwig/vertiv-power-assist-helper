@@ -1,3 +1,4 @@
+
 # VARIABLES
 DEBUG = True    # get debug message every time script is executed and use debug ssh command (ls)
 TCPSEND = True  # send additional message over tcp (for example "fluentd")
@@ -78,19 +79,20 @@ def checkSsh():
 
 # PING TCP
 def checkTcp():
-    with open(os.devnull, 'w') as DEVNULL:
-        if platform.system() == "Linux":
-            subprocess.check_call(
-            ['ping', '-c', '1', TCPIP],
-            stdout=DEVNULL,  # suppress output
-            stderr=DEVNULL
-            )
-        if platform.system() == "Windows":
-            subprocess.check_call(
-            ['ping', TCPIP, '-n', '1'],
-            stdout=DEVNULL,  # suppress output
-            stderr=DEVNULL
-            )
+    if TCPSEND == True:
+        with open(os.devnull, 'w') as DEVNULL:
+            if platform.system() == "Linux":
+                subprocess.check_call(
+                ['ping', '-c', '1', TCPIP],
+                stdout=DEVNULL,  # suppress output
+                stderr=DEVNULL
+                )
+            if platform.system() == "Windows":
+                subprocess.check_call(
+                ['ping', TCPIP, '-n', '1'],
+                stdout=DEVNULL,  # suppress output
+                stderr=DEVNULL
+                )
 
 # SSH COMMAND IF UPS RUNTIME LOW
 def sendSsh():
