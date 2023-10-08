@@ -1,4 +1,3 @@
-
 # VARIABLES
 DEBUG = True    # get debug message every time script is executed and use debug ssh command (ls)
 TCPSEND = True  # send additional message over tcp (for example "fluentd")
@@ -12,7 +11,7 @@ SSHPASSW = 'pw'
 SSHPORT = 22
 
 TCPIP = 'ip'
-TCPPORT = 0
+TCPPORT = 99999
 TCPBUFFER = 1024
 
 # INSTALL MISSING MODULES AUTOMATIC
@@ -61,7 +60,7 @@ def checkUpsApi():
     else:
         return isAcPresent, runTimeToEmpty
 
-# PING SSH IP
+# PING SSH
 def checkSsh():
     with open(os.devnull, 'w') as DEVNULL:
         if platform.system() == "Linux":
@@ -73,6 +72,22 @@ def checkSsh():
         if platform.system() == "Windows":
             subprocess.check_call(
             ['ping', SSHIP, '-n', '1'],
+            stdout=DEVNULL,  # suppress output
+            stderr=DEVNULL
+            )
+
+# PING TCP
+def checkTcp():
+    with open(os.devnull, 'w') as DEVNULL:
+        if platform.system() == "Linux":
+            subprocess.check_call(
+            ['ping', '-c', '1', TCPIP],
+            stdout=DEVNULL,  # suppress output
+            stderr=DEVNULL
+            )
+        if platform.system() == "Windows":
+            subprocess.check_call(
+            ['ping', TCPIP, '-n', '1'],
             stdout=DEVNULL,  # suppress output
             stderr=DEVNULL
             )
@@ -95,12 +110,13 @@ def sendSshDebug():
     return resp
 
 # SEND TCP MESSAGE
-def sendTcp(mesg):
+def sendTcp(severityStr, msgStr):
     if TCPSEND == True:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(2)
         s.connect((TCPIP, TCPPORT))
-        sendMesg = '{"device_id":"PowerAssistHelper","mesg":"' + mesg + '"}' + '\n'
-        s.send((sendMesg).encode())
+        send = '{"device_id":"PowerAssistHelper","timestamp":"' + currentTime() + '","severity":"' + severityStr + '","msg":"' + msgStr + '"}' + '\n'
+        s.send((send).encode())
         s.close()
 
 # MAIN
@@ -117,35 +133,51 @@ try:
 
     isAcPresent, runTimeLeft = checkUpsApi()
     checkSsh()
+    checkTcp()
 
     if DEBUG == True:
-        mesg = sendSshDebug()
-        print(f'{currentTime()} : {mesg}')
-        sendTcp(mesg)
-        mesg = currentTime() + ' : ' + str(runTimeLeft) + ' seconds estimated runtime.'
-        print(f'{mesg}')
-        sendTcp(mesg)
+        # Print ssh
+        severityStr = 'DEBUG'
+        msgStr = str(sendSshDebug())
+        print(f'{currentTime()} : {severityStr} : {msgStr}')
+        sendTcp(severityStr, msgStr)
+        # Print runtime
+        severityStr = 'DEBUG'
+        msgStr = str(runTimeLeft) + ' seconds estimated runtime.'
+        print(f'{currentTime()} : {severityStr} : {msgStr}')
+        sendTcp(severityStr, msgStr)
 
     if runTimeLeft == 0:
         if DEBUG == True:
-            mesg = sendSshDebug()
-            print(f'{currentTime()} : {mesg}')
-            sendTcp(mesg)
+            severityStr = 'DEBUG'
+            msgStr = str(sendSshDebug())
+            print(f'{currentTime()} : {severityStr} : {msgStr}')
+            sendTcp(severityStr, msgStr)
         else:
+            severityStr = 'WARNING'
+            msgStr = 'Shutdown now.'
+            print(f'{currentTime()} : {severityStr} : {msgStr}')
+            sendTcp(severityStr, msgStr)
             sendSsh()
     elif isAcPresent == False:
-        mesg = currentTime() + ' : AC lost. ' + str(runTimeLeft) + ' seconds runtime left.'
-        print(f'{mesg}')
-        sendTcp(mesg)
+        severityStr = 'WARNING'
+        msgStr = 'AC lost! ' + str(runTimeLeft) + ' seconds runtime left.'
+        print(f'{currentTime()} : {severityStr} : {msgStr}')
+        sendTcp(severityStr, msgStr)
     elif heartbeatTime() == '00':
-        mesg = currentTime() + ' : ' + str(runTimeLeft) + ' seconds estimated runtime.'
-        print(f'{mesg}')
-        sendTcp(mesg)
+        severityStr = 'INFO'
+        msgStr = currentTime() + ' : ' + str(runTimeLeft) + ' seconds estimated runtime.'
+        print(f'{currentTime()} : {severityStr} : {msgStr}')
+        sendTcp(severityStr, msgStr)
     else:
         pass
 except Exception as err:
     try:
-        print(f'{currentTime()} : {err}')
-        sendTcp(err)
+        severityStr = 'ERROR'
+        msgStr = str(err)
+        print(f'{currentTime()} : {severityStr} : {err}')
+        sendTcp(severityStr, msgStr)
     except Exception as err:
-        print(f'{currentTime()} : {err}')
+        severityStr = 'ERROR'
+        msgStr = str(err)
+        print(f'{currentTime()} : {severityStr} : {err}')
