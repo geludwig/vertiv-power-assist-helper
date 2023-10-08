@@ -75,7 +75,7 @@ TCPBUFFER = 1024
 ```
 
 ### FLUENTD CONFIG (OPTIONAL)
-The TCP/IP stack can be used to send logging messages, for example to Fluentd. The following fluentd.config is the most basic example to receive TCP/IP messages in the JSON format.
+The TCP/IP stack can be used to send logging messages, for example to Fluentd. The following fluentd.config is the most basic example to receive TCP/IP messages in the JSON format and print it to "/var/log/fluent/fluentd.log" or CLI under Windows.
 ```
 <source>
   @type tcp
