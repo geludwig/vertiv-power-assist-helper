@@ -32,7 +32,7 @@ unzip PowerAssist_Linux_1.4.0.zip
 sudo apt install ./PowerAssist_1.4.0_amd64.deb
 ```
 
-4) Install default-jre if required
+~~4) Install default-jre if required~~ (should not be needed)
 ```
 sudo apt install default-jre
 ```
