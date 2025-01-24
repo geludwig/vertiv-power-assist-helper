@@ -17,6 +17,11 @@ https://downloads1.vertivco.com/Trellis/Power%20Assist/v1.4/Vertiv%20Power%20Ass
 wget "https://downloads1.vertivco.com/Trellis/Power%20Assist/v1.4/PowerAssist_Linux_1.4.0.zip"
 ```
 
+Link to version 2.0.0 (not tested)
+```
+https://downloads1.vertivco.com/Trellis/Power Assist/v2.0.0/PowerAssist_Linux_2.0.0.zip
+```
+
 2) Unzip
 ```
 unzip PowerAssist_Linux_1.4.0.zip
