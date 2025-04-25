@@ -8,43 +8,35 @@ https://downloads1.vertivco.com/Trellis/Power%20Assist/v1.4/Vertiv%20Power%20Ass
 ```
 
 ### REQUIREMENTS
-- OS: Tested on Ubunu 22.04 LTS Server (headless), compatible with Windows
+- OS: Linux / Windows (tested on Ubuntu 24.04 LTS amd64)
 - UPS: Vertiv Edge (USB)
 
 ### INSTALLATION (LINUX)
-1) Get PowerAssist_Linux_1.4.0.zip
+1) Get PowerAssist
+```
+wget "https://downloads1.vertivco.com/Trellis/Power Assist/v2.0.0/PowerAssist_Linux_2.0.0.zip"
+```
+
+Old versions (links may be broken)
 ```
 wget "https://downloads1.vertivco.com/Trellis/Power%20Assist/v1.4/PowerAssist_Linux_1.4.0.zip"
 ```
 
-Link to version 2.0.0 (not tested)
+2) Install
 ```
-https://downloads1.vertivco.com/Trellis/Power Assist/v2.0.0/PowerAssist_Linux_2.0.0.zip
-```
-
-2) Unzip
-```
-unzip PowerAssist_Linux_1.4.0.zip
+unzip PowerAssist_Linux_2.0.0.zip
 ```
 
-3) Install
 ```
-sudo apt install ./PowerAssist_1.4.0_amd64.deb
-```
-
-~~4) Install default-jre if required~~ (should not be needed)
-```
-sudo apt install default-jre
+sudo apt install ./PowerAssist_2.0.0_amd64.deb
 ```
   
-5) Check status
+3) Check status
 ```
 systemctl status ups.monitoringservice.service
 ```
-  
-6) Check webpage
 ```
-http://<IP of PowerAssist Host>:8210/api/PowerAssist
+https://<IP>:8210/api/PowerAssist
 ```
 
 ### CRONJOB SCRIPT (LINUX)
