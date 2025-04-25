@@ -1,21 +1,21 @@
 
 # VARIABLES
-DEBUG = True    # get debug message every time script is executed and use debug ssh command (ls)
-TCPSEND = True  # send additional message over tcp (for example "fluentd")
+DEBUG = True     # dry run testing
+TCPSEND = False  # send additional message over tcp (for example "fluentd")
 
-MINIMUMRUNTIMELEFT = 900    # minimum runtime left in seconds
-VERTIVIP = 'ip'
+MINIMUMRUNTIMELEFT = 900    # minimum usv runtime left in seconds
+VERTIVIP = 'IP'
 
-SSHIP = 'ip'
-SSHUSER = 'user'
-SSHPASSW = 'pw'
+SSHIP = 'IP'
+SSHUSER = 'USER'
+SSHPASSW = 'PASSWORD'
 SSHPORT = 22
 
-TCPIP = 'ip'
-TCPPORT = 99999
+TCPIP = 'IP'
+TCPPORT = 0
 TCPBUFFER = 1024
 
-# INSTALL MISSING MODULES AUTOMATIC
+# INSTALL MISSING MODULES
 def installModules(module, module_name):
     i = 0
     for x in module:
@@ -42,24 +42,16 @@ def currentTime():
 
 # HEARTBEAT TIME
 def heartbeatTime():
-    # returns minute
     heartbeat_time = time.strftime('%M', time.gmtime())
     return heartbeat_time
 
 # CHECK UPS STATUS
 def checkUpsApi():
-    responseVertiv = requests.get('http://' + VERTIVIP + ':8210/api/PowerAssist', timeout=2)
+    responseVertiv = requests.get('https://' + VERTIVIP + ':8210/api/PowerAssist', timeout=2, verify=False)
     jsondict = responseVertiv.json()
     isAcPresent = (jsondict[0]['status']['isAcPresent'])
     runTimeToEmpty = (jsondict[0]['status']['runTimeToEmptyInSeconds'])
-    if isAcPresent == False:
-        if runTimeToEmpty > MINIMUMRUNTIMELEFT:
-            runTimeLeft = runTimeToEmpty - MINIMUMRUNTIMELEFT
-            return isAcPresent, runTimeLeft
-        else:
-            return isAcPresent, 0
-    else:
-        return isAcPresent, runTimeToEmpty
+    return isAcPresent, runTimeToEmpty
 
 # PING SSH
 def checkSsh():
@@ -67,13 +59,13 @@ def checkSsh():
         if platform.system() == "Linux":
             subprocess.check_call(
             ['ping', '-c', '1', SSHIP],
-            stdout=DEVNULL,  # suppress output
+            stdout=DEVNULL,
             stderr=DEVNULL
             )
         if platform.system() == "Windows":
             subprocess.check_call(
             ['ping', SSHIP, '-n', '1'],
-            stdout=DEVNULL,  # suppress output
+            stdout=DEVNULL,
             stderr=DEVNULL
             )
 
@@ -84,30 +76,30 @@ def checkTcp():
             if platform.system() == "Linux":
                 subprocess.check_call(
                 ['ping', '-c', '1', TCPIP],
-                stdout=DEVNULL,  # suppress output
+                stdout=DEVNULL,
                 stderr=DEVNULL
                 )
             if platform.system() == "Windows":
                 subprocess.check_call(
                 ['ping', TCPIP, '-n', '1'],
-                stdout=DEVNULL,  # suppress output
+                stdout=DEVNULL,
                 stderr=DEVNULL
                 )
 
-# SSH COMMAND IF UPS RUNTIME LOW
+# SSH COMMAND
 def sendSsh():
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(SSHIP, SSHPORT, SSHUSER, SSHPASSW)
-    stdin, stdout, stderr = ssh.exec_command('/sbin/shutdown.sh && /sbin/poweroff')
+    stdin, stdout, stderr = ssh.exec_command('shutdown now') # good old exec ... yeah
 
-# DEBUG MODE
+# SSH COMMAND DEBUG
 def sendSshDebug():
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(SSHIP, SSHPORT, SSHUSER, SSHPASSW)
-    stdin, stdout, stderr = ssh.exec_command('ls')
-    outlines=stdout.readlines(1) # read only first line
+    stdin, stdout, stderr = ssh.exec_command('uname -a')
+    outlines=stdout.readlines(1)
     resp = (''.join(outlines)).rstrip()
     return resp
 
@@ -133,26 +125,32 @@ try:
     import time
     installModules(module, module_name)
 
+    # disable ssl warnings due to self signed certificate
+    from requests.packages.urllib3.exceptions import InsecureRequestWarning
+    requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+
     isAcPresent, runTimeLeft = checkUpsApi()
     checkSsh()
     checkTcp()
 
+    # print additional debug message
     if DEBUG == True:
-        # Print ssh
         severityStr = 'DEBUG'
         msgStr = str(sendSshDebug())
         print(f'{currentTime()} : {severityStr} : {msgStr}')
         sendTcp(severityStr, msgStr)
-        # Print runtime
         severityStr = 'DEBUG'
         msgStr = str(runTimeLeft) + ' seconds estimated runtime.'
         print(f'{currentTime()} : {severityStr} : {msgStr}')
         sendTcp(severityStr, msgStr)
 
-    if runTimeLeft == 0:
+    # functions
+    # send shutdown command over ssh and message over tcp
+    if runTimeLeft <= MINIMUMRUNTIMELEFT:
         if DEBUG == True:
             severityStr = 'DEBUG'
             msgStr = str(sendSshDebug())
+            print(f'{currentTime()} : {severityStr} : Printing ssh debug message instead of sending live ssh command.')
             print(f'{currentTime()} : {severityStr} : {msgStr}')
             sendTcp(severityStr, msgStr)
         else:
@@ -161,15 +159,16 @@ try:
             print(f'{currentTime()} : {severityStr} : {msgStr}')
             sendTcp(severityStr, msgStr)
             sendSsh()
+    # send ac lost message over tcp and print to console
     elif isAcPresent == False:
         severityStr = 'WARNING'
         msgStr = 'AC lost! ' + str(runTimeLeft) + ' seconds runtime left.'
         print(f'{currentTime()} : {severityStr} : {msgStr}')
         sendTcp(severityStr, msgStr)
+    # send heartbeat message every hour over tcp
     elif heartbeatTime() == '00':
         severityStr = 'INFO'
         msgStr = currentTime() + ' : ' + str(runTimeLeft) + ' seconds estimated runtime.'
-        print(f'{currentTime()} : {severityStr} : {msgStr}')
         sendTcp(severityStr, msgStr)
     else:
         pass
