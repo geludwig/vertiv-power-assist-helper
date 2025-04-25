@@ -1,5 +1,5 @@
 # Vertiv PowerAssist Helper Script
-- This python script monitors a Vertiv UPS connected via USB. When AC is lost the script initiates a (custom) ssh command, when the remaining runtime of the ups is smaller than a specified value. In the provided script it connects to a ESXi host via ssh and inits a shutdown.
+- This python script monitors a Vertiv UPS connected via USB. When AC is lost the script sends a (custom) ssh command, when the remaining runtime of the ups is smaller than a specified value. Customize the ssh command for your needs!
 - The installation guide is for linux only, but the python script is written for linux and windows.
 
 - Release Notes:
@@ -55,18 +55,18 @@ crontab -e
 Set the appropriate parameters inside the python script. Make sure to set "DEBUG" to "False" after testing.
 ```
 # VARIABLES
-DEBUG = True    # get debug message every time script is executed and use debug ssh command (ls)
-TCPSEND = True  # send additional message over tcp (for example "fluentd")
+DEBUG = True     # dry run testing
+TCPSEND = False  # send additional message over tcp (for example "fluentd")
 
-MINIMUMRUNTIMELEFT = 900    # minimum runtime left in seconds
-VERTIVIP = 'ip'
+MINIMUMRUNTIMELEFT = 900 # minimum usv runtime left in seconds
+VERTIVIP = 'IP'
 
-SSHIP = 'ip'
-SSHUSER = 'user'
-SSHPASSW = 'pw'
+SSHIP = 'IP'
+SSHUSER = 'USER'
+SSHPASSW = 'PASSWORD'
 SSHPORT = 22
 
-TCPIP = 'ip'
+TCPIP = 'IP'
 TCPPORT = 0
 TCPBUFFER = 1024
 ```
